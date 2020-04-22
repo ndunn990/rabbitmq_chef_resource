@@ -1,0 +1,22 @@
+[
+	{rabbit, [{tcp_listeners, []}, {disk_free_limit, {mem_relative, 1.5}}]},
+    {rabbitmq_auth_backend_ldap, [
+			{vhost_access_query,    {in_group,"<%= @rabbitmq_user_group %>"}},
+        {resource_access_query, {for, [
+            {permission, configure, {in_group, "<%= @rabbitmq_admin_group %>"}},
+            {permission, write, {for, [
+                {resource, queue, {in_group, "<%= @rabbitmq_admin_group %>"}},
+                {resource, exchange, {in_group, "<%= @rabbitmq_admin_group %>"}}
+                ]}},
+            {permission, read, {for, [
+                {resource, queue, {in_group, "<%= @rabbitmq_user_group %>"}},
+                {resource, exchange, {in_group, "<%= @rabbitmq_user_group %>"}}
+                ]}}
+        ]}},
+
+        {tag_queries, [
+            {administrator, {in_group, "<%= @rabbitmq_admin_group %>"}},
+						{management, {constant, true}}
+        ]}
+    ]}
+].

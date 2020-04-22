@@ -1,0 +1,89 @@
+#####################################
+######### MANAGED BY CHEF! ##########
+###### DO NOT CHANGE BY HAND! #######
+# YOUR CHANGES WILL BE OVERWRITTEN! #
+#####################################
+#####################################
+
+# TIP: Stop the 'chef-client' service to avoid Chef runs if you need to tinker #
+
+# These are all defaults for me...up to you to change them...
+<% @ldap_servers = ["UP TO YOU"] unless !@ldap_servers.nil? %>
+<% @log_level = "debug" unless !@log_level.nil? %>
+<% @ssl_port = "5671" unless !@ssl_port.nil? %>
+<% @ldap_use_ssl = false unless !@ldap_use_ssl.nil? %>
+<% @ldap_port = "389" unless !@ldap_port.nil? %>
+<% @management_port = "15671" unless !@management_port.nil? %>
+<% @management_ip = "127.0.0.1" unless !@management_ip.nil?%>
+<% @management_ssl = true unless !@management_ssl.nil? %>
+<% @memory_watermark = "0.6" unless !@memory_watermark.nil? %>
+<% @enable_clustering = false unless !@enable_clustering.nil? %>
+
+###################
+## AUTH BACKENDS ##
+###################
+<% @count = 1 %>
+<% @auth_backends.each do |backend| %>
+auth_backends.<%= @count %> = <%= backend %>
+<% @count += 1 %>
+<% end %>
+
+<% if @auth_backends.include?("ldap") %>
+########################
+## LDAP CONFIGURATION ##
+########################
+auth_cache.cached_backend = ldap
+auth_cache.cache_ttl = 240000
+<% @count = 1 %>
+<% @ldap_servers.each do |server| %>
+  auth_ldap.servers.<%= @count %> = <%= server %>
+  <% @count += 1 %>
+<% end %>
+auth_ldap.use_ssl = <%= @ldap_use_ssl %>
+auth_ldap.port = <%= @ldap_port %>
+<% unless @ldap_log.nil? %>
+  auth_ldap.log = <%= @ldap_log %>
+<% end %>
+auth_ldap.timeout = 10000
+auth_ldap.idle_timeout = 900000
+auth_ldap.dn_lookup_base = <%= @ldap_dn_lookup_base %>
+auth_ldap.dn_lookup_attribute = <%= @ldap_lookup_attribute %>
+auth_ldap.user_dn_pattern = <%= @ldap_user_dn_pattern %>
+<% end %>
+
+######################
+## RABBITMQ LOGGING ##
+######################
+log.file.level = <%= @log_level %>
+
+<% if @ssl == true %>
+#############################
+## SSL SETTINGS FOR QUEUES ##
+#############################
+listeners.ssl.default = <%= @ssl_port %>
+ssl_options.cacertfile = <%= @ssl_ca %>
+ssl_options.certfile = <%= @ssl_cert %>
+ssl_options.keyfile = <%= @ssl_key %>
+ssl_options.depth = 5
+ssl_options.verify = verify_peer
+ssl_options.fail_if_no_peer_cert = false
+<% end %>
+
+###################
+## MANAGEMENT UI ##
+###################
+management.listener.port = <%= @management_port %>
+management.listener.ip = <%= @management_ip %>
+management.listener.ssl = <%= @management_ssl %>
+management.listener.ssl_opts.certfile = <%= @management_ssl_cert %>
+management.listener.ssl_opts.keyfile = <%= @management_ssl_key %>
+
+#######################
+## MEMORY MANAGEMENT ##
+#######################
+vm_memory_high_watermark.relative = <%= @memory_watermark %>
+
+##############################
+## CLUSTERING CONFIGURATION ##
+##############################
+cluster_partition_handling = autoheal
