@@ -11,12 +11,12 @@ Having said all of that, I cannot deny that their cookbook heavily inspired me. 
 
 # What is Included
   1. Custom Chef resources for RabbitMQ
-  2. A few templates that you're welcome to tweak so you can configure RabbitMQ precisely the way you need. (TODO)
+  2. A few templates that you're welcome to tweak so you can configure RabbitMQ precisely the way you need.
   3. Some example recipes. (TODO)
   
 # Resources
 ## Bunny_Cluster
-   This resource is designed to create a RabbitMQ cluster. RabbitMQ clusters need to handled with care, so way in which the    resource handles it is pretty straightfoward, and this is by design. It accepts a list of node names (with the 'rabbit@' included) and marks the first as the 'master' node to which all other nodes will target to join the cluster, using the RabbitMQ CLI (also known as a *manually joining a cluster*).
+   This resource is designed to create a RabbitMQ cluster. RabbitMQ clusters need to be handled with care, so the way in which the resource handles it is pretty straightfoward, and this is by design. It accepts a list of node names (with the 'rabbit@' included) and marks the first as the 'master' node to which all other nodes will target to join the cluster, using the RabbitMQ CLI (also known as a *manually joining a cluster*).
    Right now the resource only supports the 'join' action. I have some plans to add a 'remove' action. RabbitMQ clusters occasionally give me a headache, so I figured I'm probably not completely alone in that and someone out there will appreciate a simple explanation of *how* it's doing this.
    
 ## Bunny_Policy
